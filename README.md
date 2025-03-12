@@ -58,12 +58,7 @@ Each archive contains an STL file of a rough rock surface that can be used in th
    - Run **Fracture_development.p3fis** to track fracture initiation and propagation.
 ---
 
-## License
-
-(*Optionally specify your license here, for example: [MIT License](https://opensource.org/licenses/MIT).*)
-
----
 
 ## Contact
 
-For any questions or suggestions regarding these scripts and data files, please open an issue in this repository.
+For any questions or suggestions regarding these scripts and data files, please contact via xkh5114@psu.edu or xinxinheest@gmail.com.
