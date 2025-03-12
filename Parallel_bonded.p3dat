@@ -1,0 +1,39 @@
+; fname: Parallel_bonded.p3dat
+;
+;  Create parallel bonded sample
+;==============================================================================
+;restore unbonded
+
+contact model linearpbond range contact type ball-ball
+contact method bond gap 0;2.0e-4
+
+; set linear stiffness using methods
+contact method deform emod @emod krat @krat
+
+; set stiffness of bonds using methods
+contact method pb_deform emod @pb_emod krat @pb_krat
+
+; set bond strengths
+contact property pb_ten @pb_ten pb_coh @pb_coh pb_fa @pb_fa
+
+; set some damping at the contacts
+contact property dp_nratio 0.5
+
+; set ball-ball friction to non-zero value
+contact property fric @ball_fric range contact type ball-ball
+
+; Reset ball displacement 
+ball attribute displacement multiply 0.0
+
+; Set the linear force to 0.0 and force a reset of the linear contact forces. 
+contact property lin_force 0.0 0.0 0.0 lin_mode 1
+ball attribute contactforce multiply 0.0 contactmoment multiply 0.0 
+cycle 1
+solve aratio 1e-5
+
+; Reset ball displacement 
+ball attribute displacement multiply 0.0
+contact method bond
+
+;==============================================================================
+; eof: Parallel_bonded.p3dat

@@ -1,0 +1,29 @@
+[Num_mc = 5]; numbers of measurements circles in one direction.
+[rad_measure=(effctive_length-3*offset_stepping*Sample_wave_length_x)/(Num_mc*2)]
+[rad_measure_scalling=rad_measure/2]
+
+measure delete
+measure create id 50 position [0+offset_mc_x] 0 0 rad @rad_measure_scalling
+
+measure create id 51 position [0+offset_mc_x] [0+1*(rad_measure*2)] 0 rad @rad_measure_scalling
+measure create id 52 position [0+offset_mc_x] [0+2*(rad_measure*2)] 0 rad @rad_measure_scalling
+measure create id 53 position [0+offset_mc_x] [0-1*(rad_measure*2)] 0 rad @rad_measure_scalling
+measure create id 54 position [0+offset_mc_x] [0-2*(rad_measure*2)] 0 rad @rad_measure_scalling
+
+measure create id 55 position [0+1*(rad_measure*2)+offset_mc_x] 0 0 rad @rad_measure_scalling
+measure create id 56 position [0+2*(rad_measure*2)+offset_mc_x] 0 0 rad @rad_measure_scalling
+measure create id 57 position [0-1*(rad_measure*2)+offset_mc_x] 0 0 rad @rad_measure_scalling
+measure create id 58 position [0-2*(rad_measure*2)+offset_mc_x] 0 0 rad @rad_measure_scalling
+
+[move=2*((rad_measure*math.sqrt(2))-rad_measure)/math.sqrt(2)]
+
+measure create id 59 position [0+1*(rad_measure*2)+offset_mc_x] [0+1*(rad_measure*2)] 0 rad @rad_measure_scalling
+measure create id 60 position [0+2*(rad_measure*2)-move+offset_mc_x] [0+2*(rad_measure*2)-move] 0 rad @rad_measure_scalling
+measure create id 61 position [0-1*(rad_measure*2)+offset_mc_x] [0-1*(rad_measure*2)] 0 rad @rad_measure_scalling
+measure create id 62 position [0-2*(rad_measure*2)+move+offset_mc_x] [0-2*(rad_measure*2)+move] 0 rad @rad_measure_scalling
+
+measure create id 63 position [0-1*(rad_measure*2)+offset_mc_x] [0+1*(rad_measure*2)] 0 rad @rad_measure_scalling
+measure create id 64 position [0-2*(rad_measure*2)+move+offset_mc_x] [0+2*(rad_measure*2)-move] 0 rad @rad_measure_scalling
+measure create id 65 position [0+1*(rad_measure*2)+offset_mc_x] [0-1*(rad_measure*2)] 0 rad @rad_measure_scalling
+measure create id 66 position [0+2*(rad_measure*2)-move+offset_mc_x] [0-2*(rad_measure*2)+move] 0 rad @rad_measure_scalling
+

@@ -1,0 +1,107 @@
+new
+set random 10001
+set gravity 0.0
+call Initial_parammeters
+call Functions
+;call CMAT
+
+domain extent [-Sample_length*2] [Sample_length*2] ...
+              [-Sample_length*2] [Sample_length*2] ...
+              [-Sample_length*0.7*2] [Sample_length*0.7*2] ...
+              condition destroy
+
+cmat default model linear method deformability emod 1.0e9 kratio 0.0 ;just for initial ball filling,could possibly influence the properties of the fracture.
+cmat default property dp_nratio 0.5
+
+@make_sample_box_fractured
+
+@make_balls_fractured
+
+ball attribute density @ball_dens damp @ball_damp range group mineral slot 115
+
+; Calm the system
+cyc 1000 calm 10
+; Solve the system to a target limit (here the average force ratio)
+; Use density scaling to quickly reach equilibrium
+set timestep scale
+solve aratio 1e-3
+set timestep auto
+calm
+
+@delete_outsider_ball
+set timestep scale
+solve aratio 1e-3
+set timestep auto
+calm
+@delete_outsider_ball
+set timestep scale
+solve aratio 1e-3
+set timestep auto
+calm
+
+;to assign the contact properties for future contacts generate near the fractures.
+
+cmat default model linear method deformability emod @emod kratio @krat
+cmat default property fric @ball_fric dp_nratio 0.5 lin_mode 1
+cmat apply
+
+;unconfined 
+;wall delete walls range id 100
+;wall delete walls range id 101
+;wall delete walls range id 103
+wall delete walls range id 104
+wall delete walls range id 105
+wall delete walls range id 106
+wall delete walls range id 107
+;wall delete walls range id 108
+wall delete walls range id 110
+wall delete walls range id 111
+wall delete walls range id 112
+wall delete walls range id 113
+
+[fname_0 = 'Ball_created_' + fname + '.p3sav']
+save @fname_0
+
+
+call Parallel_bonded.p3dat
+
+@delete_outsider_ball
+set timestep scale
+solve aratio 1e-3
+set timestep auto
+calm
+@delete_outsider_ball
+set timestep scale
+solve aratio 1e-3
+set timestep auto
+calm
+
+@identify_fracture_surface_ball
+wall delete walls range id 100
+wall delete walls range id 101
+
+[fname_1 = 'Ball_bonded_' + fname+'.p3sav']
+save @fname_1
+
+
+;call Initial_Parammeters
+;call CMAT
+;ball attribute displacement multiply 0.0
+;;@assigning_contact_property
+;
+;;Force a reset of the linear contact forces. 
+;ball attribute contactforce multiply 0.0 contactmoment multiply 0.0
+;cycle 1
+;solve aratio 1e-5
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,75 @@
+;find the lowest position.z for group upperballs
+define find_the_lowest_mineral_up
+
+    local zmin = 1.0e12
+    local zmax = -1.0e12
+    loop foreach bp ball.list
+        if ball.group(bp,116) = 'mineral_up' then
+            local ball_zmin = ball.pos.z(bp) - ball.radius(bp)
+            zmin = math.min(zmin,ball_zmin)
+            local ball_zmax = ball.pos.z(bp) + ball.radius(bp)
+            zmax = math.max(zmax,ball_zmax)  
+        endif
+    endloop
+    Position_z_lowest_mineral_up = zmin
+    
+end
+
+@find_the_lowest_mineral_up
+
+define find_the_highest_mineral_bottom
+   
+    local zmin = 1.0e12
+    local zmax = -1.0e12
+    loop foreach bp ball.list
+        if ball.group(bp,116) = 'mineral_bottom' then
+            local ball_zmin = ball.pos.z(bp) - ball.radius(bp)
+            zmin = math.min(zmin,ball_zmin)
+            local ball_zmax = ball.pos.z(bp) + ball.radius(bp)
+            zmax = math.max(zmax,ball_zmax)  
+        endif
+    endloop
+    Position_z_highest_mineral_bottom = zmax
+    
+end
+
+@find_the_highest_mineral_bottom
+
+[Gap=Position_z_lowest_mineral_up-Position_z_highest_mineral_bottom]
+
+define traslation_z_ball
+
+    loop foreach local bp ball.list
+        if ball.group(bp,116) = 'mineral_up' then
+            ball.pos.z(bp) = ball.pos.z(bp) - Gap/2
+        endif
+    endloop
+    
+    loop foreach local bp1 ball.list
+        if ball.group(bp1,116) = 'mineral_bottom' then
+            ball.pos.z(bp1) = ball.pos.z(bp1) + Gap/2
+        endif
+    endloop
+
+end
+
+@traslation_z_ball
+
+define traslation_z_wall
+    
+    loop foreach local wp wall.list
+        if wp = wp_sampleboxUp_Top then
+            wall.pos.z(wp) = wall.pos.z(wp) - Gap/2
+        endif
+    endloop
+    
+    loop foreach local wp1 wall.list
+        if wp1 = wp_sampleboxLow_Bottom then
+            wall.pos.z(wp1) = wall.pos.z(wp1) + Gap/2
+        endif
+    endloop
+
+end
+
+@traslation_z_wall
+

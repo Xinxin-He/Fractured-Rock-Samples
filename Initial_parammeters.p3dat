@@ -1,0 +1,54 @@
+def ini_para
+;Sample_dimensions<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    Sample_length   = 0.1                              ;unit m  
+    asp_ratio       = 1                                ;The aspect ratio of width/ength
+    Sample_width    = Sample_length * asp_ratio        ;unit m  
+    Sample_height   = Sample_length * asp_ratio*0.5    ;unit m
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;;For intact samples<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+;;File name
+;    fname = 'Intact'
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;For_fractured_samples<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+;File name
+    Roughsurfname = 'len0.1_wdt0.1_rmsh0.0005_wlx0.005_wly0.005'
+    fname = 'Roughsurface_' + Roughsurfname + '_'
+    Sample_wave_length_x = 0.005         ;unit m, need to be updated for different scenarios
+;Mold
+;    roughsurfname1 = Roughsurfname + '.stl'
+;    roughsurfname2 = Roughsurfname + '.stl'
+    roughsurfname1 = 'len0.1_wdt0.1_rmsh0.0005_wlx0.005_wly0.005.stl'
+    roughsurfname2 = 'len0.1_wdt0.1_rmsh0.0005_wlx0.005_wly0.005.stl'
+
+;   putting_RSF_near =0.4e-3             ;shorten computing time,1/2 of the apparent gap
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;Ball_parameters<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    ball_poro       = 0.36                 ;sample porosity
+    ball_damp       = 0.70                 ;damping factor
+    ball_rad_lo     = 0.0008               ;unit m
+    ball_rad_hi     = 0.001                ;unit m
+    ball_dens       = 2691.00              ;unit kg/m^3
+    emod            = 4e10                 ;normal stiffness 40 Gpa
+    krat            = 1.0                  ;normal to stiffness ratio
+    ball_fric       = 0.57                 ;ball friction for mienral1
+    pb_emod         = 1.0e9                ;parallel bond normal stiffness
+    pb_krat         = 1.0                  ;parallel bond shear stiffness
+    pb_ten          = 1.0e8                ;parallel bond tensile strength
+    pb_coh          = 1.0e9                ;parallel bond cohesion
+    pb_fa           = 0.0                  ;parallel bond friction angle
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>    
+;;Servo_parameters<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+;    gain_update_freq    = 100              ; servo update frequency, defined in ini_para
+;    gain_cnt            = 0                ; initialize number of particles counted as gain, defined in ini_para
+;    gain_safety_fac     = 0.005            ; 0.5    ; gain safety factor, defined in ini_para
+;    tol                 = 1e-2             ; maximum tolerance, defined in ini_para
+;    tzz                 = 1.0e6            ; target confining stress, defined in ini_para
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;loading_parameters<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  
+    loading_vel      = 0.003 ; unit m/s
+    sitting_pressure = 1.0e6 ;unit Pa
+    peak_fraction    = 0.7
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+end
+
+@ini_para

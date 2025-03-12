@@ -1,0 +1,91 @@
+;  Fish functions to record stress and strain in wall-loading
+;========================================================================
+define setup_wall
+;
+; Find the walls and get initial sample dimensions
+;
+;  global wp_top = wall.find(1) ; assume wall 1 is the top wall
+;  global wp_bottom = wall.find(2) ; assume wall 2 is the bottom wall
+;  global vertical_direction = global.dim
+  global Sample_height_0 = wall.pos.z(wp_sampleboxUp_Top)-wall.pos.z(wp_sampleboxLow_Bottom)
+  
+  ; assume x and y are approximately the same in 3D
+  local xmin = 1.0e12
+  local xmax = -1.0e12
+  loop foreach bp ball.list
+    local ball_xmin = ball.pos.x(bp) - ball.radius(bp)
+    xmin = math.min(xmin,ball_xmin)
+    local ball_xmax = ball.pos.x(bp) + ball.radius(bp)
+    xmax = math.max(xmax,ball_xmax)
+  end_loop
+  
+  local ymin = 1.0e12
+  local ymax = -1.0e12
+  loop foreach bp ball.list
+    local ball_ymin = ball.pos.y(bp) - ball.radius(bp)
+    ymin = math.min(ymin,ball_ymin)
+    local ball_ymax = ball.pos.y(bp) + ball.radius(bp)
+    ymax = math.max(ymax,ball_ymax)
+  end_loop 
+   
+;cross_sectional_area = (xmax-xmin)*(ymax-ymin) 
+cross_sectional_area = effctive_length*Sample_width 
+  
+end
+========================================================
+define axial_stress_wall
+;
+; Compute axial stress (positive compress) using walls
+;
+; Assumes global variables sample_height and sample_width have been set
+;
+ 
+  local force1 = wall.force.contact.z(wp_sampleboxUp_Top)
+  local force2 = -wall.force.contact.z(wp_sampleboxLow_Bottom)
+  axial_stress_wall = 0.5*(force1+force2)/cross_sectional_area
+end
+========================================================
+define axial_strain_wall
+;
+; Compute axial strain (positive tension) using walls
+;
+; Assumes global variable sample_width has been set
+;
+;axial_strain_wall = 2.0*wall.disp(wp_top,vertical_direction)/Sample_height
+ axial_strain_wall = (Sample_height_0-(wall.pos.z(wp_sampleboxUp_Top) - wall.pos.z(wp_sampleboxLow_Bottom)))/Sample_height_0
+
+end
+==========================================================
+define loadhalt_wall
+;
+; Function used to stop a test when axial stress decreases to some fraction of the peak
+; Assumes axial_stress_wall is a function that returns axial stress
+; 
+; INPUT: peak_fraction - fraction of peak stress that dictates the stopping of the test
+;                        (global float)
+;
+  loadhalt_wall = 0
+  ;local abs_stress = math.abs(axial_stress_wall)
+  abs_stress = math.abs(axial_stress_wall)
+  global peak_stress = math.max(abs_stress,peak_stress)
+  if abs_stress >= 2.0e8
+    loadhalt_wall = 1
+  end_if
+end
+
+def parameters_monitering_loading
+    global Sample_height_in_testting = wall.pos.z(wp_sampleboxUp_Top)-wall.pos.z(wp_sampleboxLow_Bottom)
+    time=mech.age
+end
+
+define sitting_halt_wall
+
+  loadhalt_wall = 0
+  local abs_stress = math.abs(axial_stress_wall)
+  if abs_stress >= 1.0e6 ;1mpa for sitting
+    sitting_halt_wall = 1
+  end_if
+  
+end
+;==============================================================================
+; eof: ss_wall.fis

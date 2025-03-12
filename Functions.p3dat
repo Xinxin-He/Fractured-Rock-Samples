@@ -1,0 +1,98 @@
+def center_rough_wall(Sample_height)
+; center the rough walls
+;Upper
+    wall.pos.x(wall.find(100)) = 0.0
+    wall.pos.y(wall.find(100)) = 0.0
+    wall.pos.z(wall.find(100)) = 0.2 * Sample_height
+;Lower
+    wall.pos.x(wall.find(101)) = 0.0
+    wall.pos.y(wall.find(101)) = 0.0
+    wall.pos.z(wall.find(101)) = -0.2 * Sample_height
+end
+
+
+def make_sample_box_fractured
+
+ command
+         wall import filename @roughsurfname1 name UpperRoughSurface nothrow id 100
+         wall import filename @roughsurfname2 name LowerRoughSurface nothrow id 101
+         @center_rough_wall(@Sample_height)
+         wall generate name SampleboxUp ...
+                       box [-0.5*Sample_length] [0.5*Sample_length] ...
+                           [-0.5*Sample_Width] [0.5*Sample_Width] ...
+                           0 [0.5*Sample_height + 0.2 * Sample_height] expand 3
+
+         wall generate name SampleboxLow ...
+                       box [-0.5*Sample_length] [0.5*Sample_length] ...
+                           [-0.5*Sample_Width] [0.5*Sample_Width] ...
+                           [-0.5*Sample_height - 0.2 * Sample_height] 0 expand 3
+endcommand
+   
+    global wp_samplebox_URS = wall.find('UpperRoughSurface');wall pointer for the UpperRoughSurface
+    global wp_samplebox_LRS = wall.find('LowerRoughSurface');wall pointer for the LowerRoughSurface
+    global wp_sampleboxUp_Bottom = wall.find('SampleboxUpBottom')
+    global wp_sampleboxUp_Top = wall.find('SampleboxUpTop')
+    global wp_sampleboxUp_Front = wall.find('SampleboxUpFront')
+    global wp_sampleboxUp_Back = wall.find('SampleboxUpBack')
+    global wp_sampleboxUp_Left = wall.find('SampleboxUpLeft')
+    global wp_sampleboxUp_Right = wall.find('SampleboxUpRight')
+    global wp_sampleboxLow_Bottom = wall.find('SampleboxLowBottom')
+    global wp_sampleboxLow_Top = wall.find('SampleboxLowTop')
+    global wp_sampleboxLow_Front = wall.find('SampleboxLowFront')
+    global wp_sampleboxLow_Back = wall.find('SampleboxLowBack')
+    global wp_sampleboxLow_Left = wall.find('SampleboxLowLeft')
+    global wp_sampleboxLow_Right = wall.find('SampleboxLowRight')
+
+    command
+    wall del walls range id 102
+    wall del walls range id 109
+    endcommand
+    
+end
+
+def make_balls_fractured
+    command
+        ball distribute porosity @ball_poro ...
+                        resolution 1.0 ...
+                            radius @ball_rad_lo @ball_rad_hi ...
+                            group mineral slot 115 ...
+                            group mineral_up slot 116 ...
+                            box [-0.5*Sample_length] [0.5*Sample_length] ...
+                                [-0.5*Sample_width] [0.5*Sample_width] ...
+                                [ 0.8*0.2*Sample_height] [0.5*Sample_height + 0.2 * Sample_height]
+                                
+        ball distribute porosity @ball_poro ...
+                        resolution 1.0 ...
+                            radius @ball_rad_lo @ball_rad_hi ...
+                            group mineral slot 115 ...
+                            group mineral_bottom slot 116 ...
+                            box [-0.5*Sample_length] [0.5*Sample_length] ...
+                                [-0.5*Sample_width] [0.5*Sample_width] ...
+                                [-0.5*Sample_height - 0.2 * Sample_height] [-0.8*0.2*Sample_height]  
+    endcommand
+end
+
+def delete_outsider_ball
+    loop foreach local bp ball.list
+        if ball.contactnum(bp) <= 1
+            ball.group(bp,115) = 'to_be_deleted';ball.group(bp,slot),remeber to assign right slot number.
+        endif
+    endloop
+    command
+        ball delete range group to_be_deleted
+    endcommand
+end
+
+def identify_fracture_surface_ball
+    loop foreach local bp ball.list
+        if ball.contactnum(bp,contact.typeid('ball-facet')) = 1
+            if math.abs(ball.pos.z(bp)) < [0.5*Sample_height]
+                if ball.pos.z(bp) > 0
+                ball.group(bp,117)= 'top_surface_ball';ball.group(bp,slot),remeber to assign right slot number.
+                else
+                ball.group(bp,117)= 'bottom_surface_ball'                
+                endif
+            endif
+        endif
+    endloop
+end
